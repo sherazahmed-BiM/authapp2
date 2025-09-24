@@ -2,6 +2,12 @@
   import { signIn } from "@auth/sveltekit/client";
   import { goto } from "$app/navigation";
   import { onMount } from "svelte";
+  import PageContainer from "$components/PageContainer.svelte";
+  import Card from "$components/Card.svelte";
+  import FormInput from "$components/FormInput.svelte";
+  import Button from "$components/Button.svelte";
+  import Message from "$components/Message.svelte";
+  import Divider from "$components/Divider.svelte";
 
   export let form: { error?: string; success?: boolean; redirectTo?: string };
 
@@ -39,204 +45,66 @@
   <title>Sign In - Auth App</title>
 </svelte:head>
 
-<div class="signin-container">
-  <div class="signin-card">
+<PageContainer>
+  <Card maxWidth="400px">
     <h1>Sign In</h1>
 
     {#if error}
-      <div class="error-message">{error}</div>
+      <Message type="error" message={error} />
     {/if}
 
     <!-- Credentials Sign In -->
     <form method="POST" action="?" enctype="application/x-www-form-urlencoded">
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          required
-          autocomplete="email"
-        />
-      </div>
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          required
-          autocomplete="current-password"
-        />
-      </div>
-      <button type="submit" class="signin-btn">
+      <FormInput
+        label="Email"
+        type="email"
+        id="email"
+        name="email"
+        required={true}
+        autocomplete="email"
+        bind:value={email}
+      />
+      <FormInput
+        label="Password"
+        type="password"
+        id="password"
+        name="password"
+        required={true}
+        autocomplete="current-password"
+        bind:value={password}
+      />
+      <Button variant="primary" type="submit" fullWidth={true}>
         Sign In
-      </button>
+      </Button>
     </form>
-    
 
-    <div class="divider"><span>or</span></div>
+    <Divider />
 
     <!-- Google Sign In -->
-    <button class="google-btn" type="button" on:click={handleGoogleLogin} disabled={isLoading}>
+    <Button
+      variant="google"
+      type="button"
+      fullWidth={true}
+      disabled={isLoading}
+      onClick={handleGoogleLogin}
+    >
       Sign in with Google
-    </button>
+    </Button>
 
     <div class="register-link">
       <p>Don't have an account? <a href="/register">Create one here</a></p>
     </div>
-  </div>
-</div>
+  </Card>
+</PageContainer>
 
 
 <style>
-  .signin-container {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 20px;
-  }
-
-  .signin-card {
-    background: white;
-    border-radius: 12px;
-    padding: 2rem;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 400px;
-  }
-
   h1 {
     text-align: center;
     margin-bottom: 2rem;
     color: #333;
     font-size: 2rem;
     font-weight: 600;
-  }
-
-  .error-message {
-    background-color: #fee;
-    color: #c33;
-    padding: 12px;
-    border-radius: 6px;
-    margin-bottom: 1.5rem;
-    border: 1px solid #fcc;
-    font-size: 14px;
-    text-align: center;
-  }
-
-  .signin-form {
-    margin-bottom: 1.5rem;
-  }
-
-  .form-group {
-    margin-bottom: 1.2rem;
-  }
-
-  .form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #555;
-    font-weight: 500;
-  }
-
-  .form-group input {
-    width: 100%;
-    padding: 12px;
-    border: 2px solid #e1e5e9;
-    border-radius: 6px;
-    font-size: 16px;
-    transition: border-color 0.3s ease;
-    box-sizing: border-box;
-  }
-
-  .form-group input:focus {
-    outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-  }
-
-  .form-group input:disabled {
-    background: #f8f9fa;
-    cursor: not-allowed;
-  }
-
-  .signin-btn {
-    width: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 12px;
-    border: none;
-    border-radius: 6px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-bottom: 1rem;
-  }
-
-  .signin-btn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-  }
-
-  .signin-btn:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-    transform: none;
-  }
-
-  .divider {
-    position: relative;
-    text-align: center;
-    margin: 1.5rem 0;
-  }
-
-  .divider::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: #e1e5e9;
-  }
-
-  .divider span {
-    background: white;
-    padding: 0 15px;
-    color: #666;
-    font-weight: 500;
-  }
-
-  .google-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    width: 100%;
-    background: #4285f4;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 6px;
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-
-  .google-btn:hover {
-    background: #3367d6;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(66, 133, 244, 0.4);
-  }
-
-  .google-icon {
-    width: 20px;
-    height: 20px;
   }
 
   .register-link {
